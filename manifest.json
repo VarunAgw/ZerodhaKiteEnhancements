@@ -1,0 +1,21 @@
+{
+  "name": "Zerodha Kite Enhancements",
+  "description": "Add unique features to enhance Zerodha kite platform.",
+  "icons": {
+    "128": "icon-128x128.png"
+  },
+  "version": "2.1.8",
+  "manifest_version": 3,
+  "content_scripts": [
+    {
+      "matches": [
+        "https://kite.zerodha.com/*"
+      ],
+      "js": [
+        "jquery-3.6.0.js",
+        "VK.js",
+        "content-script.js"
+      ]
+    }
+  ]
+}
