@@ -1,8 +1,11 @@
 "use strict";
 
-function isDevMode() {
-    return !('update_url' in chrome.runtime.getManifest());
-}
+// function isDevMode() {
+//     return (typeof chrome.runtime.getManifest == "object");
+//     return !('update_url' in chrome.runtime.getManifest());
+// }
+
+const isDevMode = (typeof chrome.runtime.getManifest !== "object");
 
 // ====================================================================================== Misc
 VK.addStyle(`
@@ -28,7 +31,7 @@ VK.addStyle(`
 
 VK.addStyle(`
     .app .header .logo {
-        display: none;
+        // display: none;
     }
 `);
 
@@ -282,19 +285,19 @@ $(document).on("click", ".varunagw-zoom-button", function (e) {
         window.zoomLevel = 1;
     }
     if (window.zoomLevel == 1) {
-        VK.addStyle(".marketwatch-sidebar .instruments .instrument .info {padding: 12px var(--padding-lr)}");
+        // VK.addStyle(".marketwatch-sidebar .instruments .instrument .info {padding: 12px var(--padding-lr)}");
         VK.addStyle(".vddl-list.list-flat {zoom: 100%}");
     } else if (window.zoomLevel == 2) {
-        VK.addStyle(".marketwatch-sidebar .instruments .instrument .info {padding: 10px var(--padding-lr)}");
+        // VK.addStyle(".marketwatch-sidebar .instruments .instrument .info {padding: 10px var(--padding-lr)}");
         VK.addStyle(".vddl-list.list-flat {zoom: 95%}");
     } else if (window.zoomLevel == 3) {
-        VK.addStyle(".marketwatch-sidebar .instruments .instrument .info {padding: 8px var(--padding-lr)}");
+        // VK.addStyle(".marketwatch-sidebar .instruments .instrument .info {padding: 8px var(--padding-lr)}");
         VK.addStyle(".vddl-list.list-flat {zoom: 90%}");
     } else if (window.zoomLevel == 4) {
-        VK.addStyle(".marketwatch-sidebar .instruments .instrument .info {padding: 6.5px var(--padding-lr)}");
+        // VK.addStyle(".marketwatch-sidebar .instruments .instrument .info {padding: 6.5px var(--padding-lr)}");
         VK.addStyle(".vddl-list.list-flat {zoom: 85%}");
     } else {
-        VK.addStyle(".marketwatch-sidebar .instruments .instrument .info {padding: 5px var(--padding-lr)}");
+        // VK.addStyle(".marketwatch-sidebar .instruments .instrument .info {padding: 5px var(--padding-lr)}");
         VK.addStyle(".vddl-list.list-flat {zoom: 80%}");
     }
     $(this).find("span.varunagw-zoom-status").text(window.zoomLevel);
@@ -312,7 +315,13 @@ setInterval(function () {
 $(function () {
     VK.addStyle(`
         .app .wrapper, .container {
-            max-width: 100%;
+            max-width: calc(100% - 150px);
+        }
+        .treemap {
+            max-width: min-content;
+        }
+        [data-balloon] {
+            position: static;
         }
         @media only screen and (min-width: 1500px) {
             .app .wrapper, .container {
@@ -344,7 +353,7 @@ setInterval(function () {
 
 
 // ====================================================================================== Wider watchlist
-// if (isDevMode()) {
+// if (isDevMode) {
 //     VK.addStyle(`
 //         .marketwatch-sidebar .marketwatch-selector {
 //            width: 533px;
@@ -358,7 +367,7 @@ setInterval(function () {
 //     `);
 //
 //     setTimeout(function () {
-//         let width1 = isDevMode() ? 550 : 383;
+//         let width1 = isDevMode ? 550 : 383;
 //         let width2 = width1 + 1;
 //         VK.addStyle(`.container-left {min-width: ${width1}px;}`);
 //         VK.addStyle(`.marketwatch-sidebar {width: ${width1}px !important;}`);
@@ -367,7 +376,7 @@ setInterval(function () {
 // }
 
 // ====================================================================================== Market Depth
-// if (isDevMode()) {
+// if (isDevMode) {
 //     window.depth_enabled = true;
 //     $(document).on("click", ".varunagw-depth-button", function (e) {
 //         e.preventDefault();
@@ -408,7 +417,7 @@ setInterval(function () {
 //
 //                 //let quotes = {"BSE:RELIANCE": 1};
 //                 let quotes = await $.ajax({
-//                     url: "https://trading.test/kite/quotesApi.php",
+//                     url: "https://trading.win/kite/quotesApi.php",
 //                     method: "POST",
 //                     data: {instruments: instruments},
 //                 });
@@ -476,37 +485,37 @@ setInterval(function () {
 // }
 
 // ====================================================================================== Hide Risk disclosures
-if (isDevMode()) {
-    (async () => {
-        await VK.waitUntilExists("div.modal-header:contains(Risk disclosures on derivatives)");
-        $(".modal-footer button:contains(I understand)").click();
-    })();
-}
+(async () => {
+    const dialog = await VK.waitUntilExists("div.risk-disclosure-modal-modal[role=dialog]");
+    const $dialog = $(dialog);
+    const $button = $dialog.find("button:contains(I understand)");
+    $("button:contains(I understand)").click();
+})();
 
 // ====================================================================================== Auto Login
-if (isDevMode()) {
-    if ((VK.URL.href.startsWith("https://kite.zerodha.com/") && VK.URL.pathnow === "") || VK.URL.href.startsWith("https://kite.zerodha.com/connect/login?")) {
-        (async () => {
-            let creds = await $.get("https://trading.test/kite/loginCred.php");
-
-            await VK.waitUntilExists("input[type=password]");
-            $("input[type=text]").val2(creds.user);
-            $("input[type=password]").val2(creds.password);
-            $("button[type=submit]").click();
-
-            await VK.waitUntilExists(".twofa-value input");
-            $(".twofa-value input").val2(creds.topt);
-        })();
-    }
-}
+// if (isDevMode) {
+//     if ((VK.URL.href.startsWith("https://kite.zerodha.com/") && VK.URL.pathnow === "") || VK.URL.href.startsWith("https://kite.zerodha.com/connect/login?")) {
+//         (async () => {
+//             let creds = await $.get("https://trading.win/api/kite_login_creds.php");
+//
+//             await VK.waitUntilExists("input[type=password]");
+//             $("input[type=text]").val2(creds.user);
+//             $("input[type=password]").val2(creds.password);
+//             $("button[type=submit]").click();
+//
+//             await VK.waitUntilExists(".twofa-value input");
+//             $(".twofa-value input").val2(creds.topt);
+//         })();
+//     }
+// }
 
 // ====================================================================================== Copy Symbol / Quick Square Off
-if (isDevMode()) {
+if (isDevMode) {
     $(document).on("click", ".varunagw-copy-link", async function (e) {
         e.preventDefault();
         let exchange = $(this).data("exchange");
         let symbol = $(this).data("symbol");
-        let result = await $.get(`https://trading.test/kite/symbolInfo.php?fullSymbol=${exchange}:${symbol}`);
+        let result = await $.get(`https://trading.win/kite/symbolInfo.php?fullSymbol=${exchange}:${symbol}`);
         VK.copyToClipboard(result.matchingSymbol);
     });
     $(document).on("click", ".varunagw-copy-text-link", function (e) {
@@ -524,9 +533,9 @@ if (isDevMode()) {
 
                 let link = exchange + ":" + symbol
                     + ":" + (-1 * parseFloat($(this).find("td.quantity").text().trim()));
-                link = "https://trading.test/kite/order.php?submit=1&orders[]=" + encodeURIComponent(link);
+                link = "https://trading.win/kite/order.php?submit=1&orders[]=" + encodeURIComponent(link);
 
-                if (isDevMode()) {
+                if (isDevMode && 0) {
                     if ($(this).find("a.varunagw-exit-link").length == 0) {
                         $(this).find("td.instrument").prepend($("<a class='varunagw-exit-link' target='_blank'>x </a>"));
                         $(this).find("td.instrument").prepend($("<a class='varunagw-copy-text-link' target='_blank' href='#full-text'>⎘ </a>").data("exchange", exchange).data("symbol", symbol));
@@ -543,9 +552,9 @@ if (isDevMode()) {
 
             let link = $(this).find("td.product").text().trim() + ":" + exchange + ":" + symbol
                 + ":" + (-1 * parseFloat($(this).find("td.quantity").text().trim()));
-            link = "https://trading.test/kite/order.php?submit=1&orders[]=" + encodeURIComponent(link);
+            link = "https://trading.win/kite/order.php?submit=1&orders[]=" + encodeURIComponent(link);
 
-            if (isDevMode()) {
+            if (isDevMode && 0) {
                 if ($(this).find("a.varunagw-exit-link").length == 0) {
                     $(this).find("td.instrument").prepend($("<a class='varunagw-exit-link' target='_blank'>x </a>"));
                     $(this).find("td.instrument").prepend($("<a class='varunagw-copy-text-link' target='_blank' href='#full-text'>⎘ </a>").data("exchange", exchange).data("symbol", symbol));
